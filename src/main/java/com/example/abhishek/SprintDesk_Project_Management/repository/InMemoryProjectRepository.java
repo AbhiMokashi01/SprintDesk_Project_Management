@@ -13,8 +13,18 @@ public class InMemoryProjectRepository implements ProjectRepository {
 
     HashMap<Long, Project> projects;
 
+
     public InMemoryProjectRepository() {
         projects = new HashMap<>();
+    }
+
+    @Override
+    public boolean projectExists(String key)
+    {
+        for(Project p:projects.values())
+            if(p.getKey().equals(key))
+                return true;
+        return false;
     }
 
     @Override

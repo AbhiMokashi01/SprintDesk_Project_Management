@@ -10,4 +10,6 @@ public interface ProjectRepository {
     public Project updateProject(long id,Project project);
     public Project addProject(Project project);
     public String deleteProject(Long id);
+
+    boolean projectExists(String key);
 }
