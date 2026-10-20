@@ -32,5 +32,11 @@ public class TaskController {
                 .body(taskService.getTasksByProjectId(projectId));
     }
 
+    @GetMapping("/api/tasks/{taskId}")
+    public ResponseEntity<Task> getTaskById(@PathVariable long taskId) {
+        return ResponseEntity.ok()
+                .body(taskService.getTaskById(taskId));
+    }
+
 
 }
