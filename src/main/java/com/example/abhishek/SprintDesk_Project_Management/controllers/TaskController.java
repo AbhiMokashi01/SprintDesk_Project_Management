@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 
@@ -23,4 +24,13 @@ public class TaskController {
                 .body(taskService.addTask(task,projectId));
 
     }
+
+
+    @GetMapping("/api/projects/{projectId}/tasks")
+    public ResponseEntity<List<Task>>  getTasksByProjectId(@PathVariable long projectId) {
+        return ResponseEntity.ok()
+                .body(taskService.getTasksByProjectId(projectId));
+    }
+
+
 }

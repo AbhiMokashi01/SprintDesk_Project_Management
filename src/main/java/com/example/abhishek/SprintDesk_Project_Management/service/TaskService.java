@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class TaskService {
 
@@ -25,5 +27,13 @@ public class TaskService {
         task.setProject(project);
         taskRepository.save(task);
         return task;
+    }
+
+    public List<Task> getTasksByProjectId(long projectId) {
+        if(projectRepository.findById(projectId).isPresent()) {
+            return taskRepository.findAllByProjectId(projectId);
+        }
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Projects not found with project id"+projectId);
     }
 }
