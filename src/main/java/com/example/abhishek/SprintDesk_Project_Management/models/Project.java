@@ -1,15 +1,16 @@
 package com.example.abhishek.SprintDesk_Project_Management.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 public class Project {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String name;
     String key;

@@ -11,4 +11,6 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
 //    public Project updateProject(long id,Project project);
 //    public Project addProject(Project project);
 //    public String deleteProject(Long id);
+
+    boolean existsByKey(String key);
 }

@@ -37,13 +37,11 @@ public class ProjectController {
 
     @PatchMapping("/{id}")
     public Project updateProject(@PathVariable Long id,@RequestBody Project project) {
-        System.out.println("Patch Project");
         return projectService.updateProject(id,project);
     }
 
     @DeleteMapping("/{id}")
     public String deleteProject(@PathVariable Long id) {
-        System.out.println("Delete Project");
         return projectService.deleteProject(id);
     }
 
