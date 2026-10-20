@@ -41,4 +41,14 @@ public class TaskService {
     public Task getTaskById(long taskId) {
         return taskRepository.findById(taskId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId));
     }
+
+    public Task updateTask(long taskId, Task task) {
+        if(taskRepository.findById(taskId).isPresent()) {
+            return taskRepository.save(task);
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId);
+        }
+    }
 }

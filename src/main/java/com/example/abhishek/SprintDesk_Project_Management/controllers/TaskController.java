@@ -38,5 +38,10 @@ public class TaskController {
                 .body(taskService.getTaskById(taskId));
     }
 
+    @PatchMapping("/api/tasks/{taskId}")
+    public ResponseEntity<Task> updateTask(@RequestBody Task task,@PathVariable long taskId) {
+        return ResponseEntity.ok()
+                .body(taskService.updateTask(taskId,task);
+    }
 
 }
