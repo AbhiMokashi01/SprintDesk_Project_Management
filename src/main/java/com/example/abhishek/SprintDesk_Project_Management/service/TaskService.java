@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -42,19 +43,43 @@ public class TaskService {
         return taskRepository.findById(taskId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId));
     }
 
-    public Task updateTask(long taskId, Task task) {
-        if(taskRepository.findById(taskId).isPresent()) {
-            return taskRepository.save(task);
+    public Task updateTask(long taskId, Task updatedTask) {
+        // 1. Fetch existing task
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Task not found with ID: " + taskId
+                        )
+                );
+
+        // 2. Update only allowed fields
+        if (updatedTask.getTitle() != null) {
+            existingTask.setTitle(updatedTask.getTitle());
         }
-        else
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId);
+
+        if (updatedTask.getDescription() != null) {
+            existingTask.setDescription(updatedTask.getDescription());
         }
+
+        if (updatedTask.getPriority() != null) {
+            existingTask.setPriority(updatedTask.getPriority());
+        }
+
+        if (updatedTask.getDueDate() != null) {
+            existingTask.setDueDate(updatedTask.getDueDate());
+        }
+
+        // 3. Update timestamp
+        existingTask.setUpdatedAt(Instant.now());
+
+        // 4. Save existing task
+        return taskRepository.save(existingTask);
     }
 
     public void deleteTaskById(long taskId) {
         if(taskRepository.findById(taskId).isPresent()) {
-            deleteTaskById(taskId);
+            projectRepository.deleteById(taskId);
         }
         else
         {

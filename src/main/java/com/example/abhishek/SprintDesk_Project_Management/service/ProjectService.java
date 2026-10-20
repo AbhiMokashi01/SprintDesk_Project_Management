@@ -48,18 +48,25 @@ public class ProjectService {
 
     public Project getProjectById(Long id) {
         return projectRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found"));
+
     }
 
 
     public Project updateProject(Long id, Project project) {
         if(projectRepository.existsById(id)) {
+            project.setUpdatedAt(Instant.now());
             return projectRepository.save(project);
             }
         else
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found");
     }
 
-    public void deleteProject(Long id) {
-         projectRepository.deleteById(id);
+
+    public void deleteProjectById(Long id) {
+        if(projectRepository.existsById(id)) {
+            projectRepository.deleteById(id);
+        }
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found");
     }
 }

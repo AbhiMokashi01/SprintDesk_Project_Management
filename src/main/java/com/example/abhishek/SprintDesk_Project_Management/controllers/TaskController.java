@@ -41,7 +41,7 @@ public class TaskController {
     @PatchMapping("/api/tasks/{taskId}")
     public ResponseEntity<Task> updateTask(@RequestBody Task task,@PathVariable long taskId) {
         return ResponseEntity.ok()
-                .body(taskService.updateTask(taskId,task);
+                .body(taskService.updateTask(taskId,task));
     }
 
     @DeleteMapping("/api/tasks/{taskId}")

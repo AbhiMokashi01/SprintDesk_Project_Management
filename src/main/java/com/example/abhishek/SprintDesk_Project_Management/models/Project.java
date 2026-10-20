@@ -21,6 +21,14 @@ public class Project {
     @OneToMany(mappedBy = "project",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<Task> tasks=new HashSet<Task>();
 
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     public Instant getUpdatedAt() {
         return updatedAt;
     }
