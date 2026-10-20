@@ -51,4 +51,14 @@ public class TaskService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId);
         }
     }
+
+    public void deleteTaskById(long taskId) {
+        if(taskRepository.findById(taskId).isPresent()) {
+            deleteTaskById(taskId);
+        }
+        else
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId);
+        }
+    }
 }
