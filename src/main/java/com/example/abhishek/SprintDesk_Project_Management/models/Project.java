@@ -1,6 +1,12 @@
 package com.example.abhishek.SprintDesk_Project_Management.models;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Project {
 
@@ -9,6 +15,19 @@ public class Project {
     String key;
     String description;
     Instant createdAt;
+    Instant updatedAt;
+
+    @OneToMany(mappedBy = "project",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Set<Task> tasks=new HashSet<Task>();
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public long getId() {
         return id;
     }
@@ -57,6 +76,7 @@ public class Project {
                 ", key='" + key + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
