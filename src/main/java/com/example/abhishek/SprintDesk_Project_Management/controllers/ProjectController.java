@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+
 
 @RestController
 @RequestMapping("/api/projects")
@@ -40,15 +43,27 @@ public class ProjectController {
 
 
     @GetMapping
-    public List<Project> getProjects()
+    public ResponseEntity<List<ProjectResponseDto>> getProjects()
     {
-        return projectService.getProjects();
+        List<Project> projects=projectService.getProjects();
+        List<ProjectResponseDto> projectResponseDtoList=new ArrayList<>();
+
+        for(Project project:projects)
+        {
+            projectResponseDtoList.add(projectMapper.modelToProjectDto(project));
+        }
+
+        return ResponseEntity.ok(projectResponseDtoList);
+
 
     }
 
     @GetMapping("/{id}")
-    public Project getProject(@PathVariable Long id) {
-        return projectService.getProjectById(id);
+    public ResponseEntity<ProjectResponseDto> getProject(@PathVariable Long id) {
+
+        Project project= projectService.getProjectById(id);
+        ProjectResponseDto projectResponseDto=projectMapper.modelToProjectDto(project);
+        return ResponseEntity.ok(projectResponseDto);
     }
 
     @PatchMapping("/{id}")
