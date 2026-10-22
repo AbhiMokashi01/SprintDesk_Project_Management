@@ -30,6 +30,7 @@ public class TaskService {
             throw new ResourceNotFoundException("Project with id " + projectId + " not found");
         }
         task.setProject(project);
+        task.setStatus(TaskStatus.TODO);
         task.setCreatedAt(Instant.now());
         task.setUpdatedAt(Instant.now());
         taskRepository.save(task);
@@ -85,10 +86,10 @@ public class TaskService {
     public void deleteTaskById(long taskId) {
         Task task = taskRepository.findById(taskId).orElse(null);
         if(taskRepository.findById(taskId).isPresent()) {
-            if(task.getStatus()== TaskStatus.TODO)
-                throw new BusinessConflictException("Task with TaskId- "+taskId+" cant be deleted as the status is still TODO");
-            else
+            if(task.getStatus()== TaskStatus.DONE)
                 taskRepository.delete(task);
+            else
+                throw new BusinessConflictException("Task with TaskId- "+taskId+" cant be deleted as the status is still in progress");
         }
         else
         {

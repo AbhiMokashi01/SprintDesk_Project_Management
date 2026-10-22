@@ -24,13 +24,14 @@ public class ProjectService {
 
 
     public Project addProject(Project project) {
+        project.setKey(project.getKey().toUpperCase());
         if(projectRepository.existsByKey(project.getKey())) {
             throw new DuplicateProjectKeyException("Project Key - "+ project.getKey()+" already exists");
         }
 
         project.setCreatedAt(Instant.now());
         project.setUpdatedAt(project.getCreatedAt());
-        project.setKey(project.getKey().toUpperCase());
+
         return projectRepository.save(project);
 
     }
