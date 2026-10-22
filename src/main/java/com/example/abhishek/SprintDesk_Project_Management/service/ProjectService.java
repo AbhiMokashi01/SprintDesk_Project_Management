@@ -1,6 +1,8 @@
 package com.example.abhishek.SprintDesk_Project_Management.service;
 
 
+import com.example.abhishek.SprintDesk_Project_Management.exception.DuplicateProjectKeyException;
+import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 public class ProjectService {
 
@@ -21,7 +24,7 @@ public class ProjectService {
 
     public Project addProject(Project project) {
         if(projectRepository.existsByKey(project.getKey())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project with key-"+project.getKey()+" already exists");
+            throw new DuplicateProjectKeyException("Project Key - "+ project.getKey()+" already exists");
         }
 
         project.setCreatedAt(Instant.now());
@@ -32,12 +35,16 @@ public class ProjectService {
     }
 
     public List<Project> getProjects() {
-        return projectRepository.findAll();
+        List<Project> projects=projectRepository.findAll();
+        if(projects.isEmpty()) {
+            throw new ResourceNotFoundException("No Projects found");
+        }
+        return projects;
     }
 
 
     public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found"));
+        return projectRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Project with id- "+id+" not found"));
 
     }
 

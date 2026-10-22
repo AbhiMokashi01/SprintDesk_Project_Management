@@ -7,6 +7,7 @@ import com.example.abhishek.SprintDesk_Project_Management.dto.response.ProjectRe
 import com.example.abhishek.SprintDesk_Project_Management.mapper.ProjectMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.service.ProjectService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ProjectController {
 
 
     @PostMapping
-    public ResponseEntity<ProjectResponseDto> addProject(@RequestBody @Valid CreateProjectRequestDto projectRequestDto) {
+    public ResponseEntity<ProjectResponseDto> addProject(@RequestBody @Valid CreateProjectRequestDto projectRequestDto, HttpServletRequest request) {
 
         Project project=projectMapper.dtoToProjectModel(projectRequestDto);
 
@@ -38,8 +39,8 @@ public class ProjectController {
 
         ProjectResponseDto projectResponseDto=projectMapper.modelToProjectDto(savedProject);
 
-        URI location= URI.create("/api/projects/"+savedProject.getId());
-        return ResponseEntity.created(location)
+        String location=request.getRequestURI();
+        return ResponseEntity.created(URI.create(location))
                 .body(projectResponseDto);
 
 
