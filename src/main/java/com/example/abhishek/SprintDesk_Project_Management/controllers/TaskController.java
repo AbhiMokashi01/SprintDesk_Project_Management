@@ -3,6 +3,7 @@ package com.example.abhishek.SprintDesk_Project_Management.controllers;
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateTaskRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.UpdateTaskRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.response.TaskResponseDto;
+import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.mapper.TaskMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
 import com.example.abhishek.SprintDesk_Project_Management.service.TaskService;
@@ -35,9 +36,6 @@ public class TaskController {
         TaskResponseDto taskResponseDto=taskMapper.modelToDto(savedTask);
 
 
-
-
-
         URI location= URI.create("/api/projects/"+projectId+"/tasks"+savedTask.getId());
 
         return ResponseEntity.created(location)
@@ -45,13 +43,16 @@ public class TaskController {
 
     }
 
-    //get
 
     @GetMapping("/api/projects/{projectId}/tasks")
     public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId) {
         List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId);
 
+        if(tasksOfProject.isEmpty())
+            throw new ResourceNotFoundException("Tasks not found for project -"+projectId);
+
         List<TaskResponseDto> taskResponseDtoList=new ArrayList<>();
+
 
         for(Task task:tasksOfProject){
             taskResponseDtoList.add(taskMapper.modelToDto(task));
