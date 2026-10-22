@@ -1,7 +1,16 @@
 package com.example.abhishek.SprintDesk_Project_Management.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class UpdateProjectRequestDto {
+
+    @NotBlank(message = "Project should have a name")
+    @Size(min = 1, max = 100)
     private String name;
+
+    @NotBlank
+    @Size(min = 1, max = 500)
     private String description;
 
     public String getName() {
