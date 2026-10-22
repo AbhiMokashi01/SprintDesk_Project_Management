@@ -1,5 +1,6 @@
 package com.example.abhishek.SprintDesk_Project_Management.service;
 
+import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
@@ -24,7 +25,7 @@ public class TaskService {
     public Task addTask(Task task, long projectId) {
         Project project = projectRepository.findById(projectId).orElse(null);
         if(project == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+            throw new ResourceNotFoundException("Project with id " + projectId + " not found");
         }
         task.setProject(project);
         task.setCreatedAt(Instant.now());
