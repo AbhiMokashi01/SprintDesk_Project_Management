@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -45,9 +46,17 @@ public class TaskController {
 
 
     @GetMapping("/api/projects/{projectId}/tasks")
-    public ResponseEntity<List<Task>>  getTasksByProjectId(@PathVariable long projectId) {
-        return ResponseEntity.ok()
-                .body(taskService.getTasksByProjectId(projectId));
+    public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId) {
+        List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId);
+
+        List<TaskResponseDto> taskResponseDtoList=new ArrayList<>();
+
+        for(Task task:tasksOfProject){
+            taskResponseDtoList.add(taskMapper.modelToDto(task));
+        }
+
+        return ResponseEntity.ok(taskResponseDtoList);
+
     }
 
     @GetMapping("/api/tasks/{taskId}")
