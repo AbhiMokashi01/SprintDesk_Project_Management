@@ -1,6 +1,7 @@
 package com.example.abhishek.SprintDesk_Project_Management.controllers;
 
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateTaskRequestDto;
+import com.example.abhishek.SprintDesk_Project_Management.dto.request.UpdateTaskRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.response.TaskResponseDto;
 import com.example.abhishek.SprintDesk_Project_Management.mapper.TaskMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
@@ -67,9 +68,14 @@ public class TaskController {
     }
 
     @PatchMapping("/api/tasks/{taskId}")
-    public ResponseEntity<Task> updateTask(@RequestBody Task task,@PathVariable long taskId) {
-        return ResponseEntity.ok()
-                .body(taskService.updateTask(taskId,task));
+    public ResponseEntity<TaskResponseDto> updateTask(@RequestBody @Valid UpdateTaskRequestDto taskRequestDto, @PathVariable long taskId) {
+        Task task=taskMapper.UpdateDtoToModel(taskRequestDto);
+
+        Task savedTask=taskService.updateTask(taskId,task);
+
+        TaskResponseDto taskResponseDto=taskMapper.modelToDto(savedTask);
+
+        return ResponseEntity.ok(taskResponseDto);
     }
 
     @DeleteMapping("/api/tasks/{taskId}")
