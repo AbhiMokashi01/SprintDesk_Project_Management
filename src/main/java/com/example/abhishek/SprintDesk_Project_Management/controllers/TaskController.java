@@ -60,9 +60,10 @@ public class TaskController {
     }
 
     @GetMapping("/api/tasks/{taskId}")
-    public ResponseEntity<Task> getTaskById(@PathVariable long taskId) {
-        return ResponseEntity.ok()
-                .body(taskService.getTaskById(taskId));
+    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable long taskId) {
+        Task task=taskService.getTaskById(taskId);
+        TaskResponseDto taskResponseDto=taskMapper.modelToDto(task);
+        return ResponseEntity.ok(taskResponseDto);
     }
 
     @PatchMapping("/api/tasks/{taskId}")
