@@ -1,8 +1,10 @@
 package com.example.abhishek.SprintDesk_Project_Management.service;
 
+import com.example.abhishek.SprintDesk_Project_Management.exception.BusinessConflictException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
+import com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +83,16 @@ public class TaskService {
     }
 
     public void deleteTaskById(long taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
         if(taskRepository.findById(taskId).isPresent()) {
-            projectRepository.deleteById(taskId);
+            if(task.getStatus()== TaskStatus.TODO)
+                throw new BusinessConflictException("Task with TaskId- "+taskId+" cant be deleted as the status is still TODO");
+            else
+                taskRepository.delete(task);
         }
         else
         {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Task not found with id -"+taskId);
+            throw new ResourceNotFoundException("Task not found with id -"+taskId);
         }
     }
 }
