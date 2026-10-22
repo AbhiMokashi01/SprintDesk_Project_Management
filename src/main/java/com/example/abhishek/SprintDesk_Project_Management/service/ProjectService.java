@@ -1,6 +1,7 @@
 package com.example.abhishek.SprintDesk_Project_Management.service;
 
 
+import com.example.abhishek.SprintDesk_Project_Management.exception.BusinessConflictException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.DuplicateProjectKeyException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
@@ -61,7 +62,12 @@ public class ProjectService {
 
     public void deleteProjectById(Long id) {
         if(projectRepository.existsById(id)) {
-            projectRepository.deleteById(id);
+            if(!projectRepository.findAllTasksByProjectId(id).isEmpty()) {
+                throw new BusinessConflictException("Project with id- "+id+" cannot be deleted as it contains tasks");
+            }
+            else {
+                projectRepository.deleteById(id);
+            }
         }
         else
             throw new ResourceNotFoundException("Project with id-"+id+" not found");

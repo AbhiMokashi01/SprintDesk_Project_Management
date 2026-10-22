@@ -59,5 +59,20 @@ public ResponseEntity<ValidationExceptionDto> validationExceptionHandler(MethodA
 }
 
 
+public ResponseEntity<ExceptionResponseDto> businessConflictHandler(BusinessConflictException exception, HttpServletRequest request)
+{
+    ExceptionResponseDto exceptionDto=new ExceptionResponseDto(
+            LocalDateTime.now(),
+            exception.getMessage(),
+            HttpStatus.CONFLICT.value(),
+            HttpStatus.CONFLICT.getReasonPhrase(),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(exceptionDto);
+}
+
+
+
 
 }
