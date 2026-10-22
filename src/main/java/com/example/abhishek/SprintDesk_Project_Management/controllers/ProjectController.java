@@ -1,9 +1,14 @@
 package com.example.abhishek.SprintDesk_Project_Management.controllers;
 
 
+import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateProjectRequestDto;
+import com.example.abhishek.SprintDesk_Project_Management.dto.response.ProjectResponseDto;
+import com.example.abhishek.SprintDesk_Project_Management.mapper.ProjectMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.service.ProjectService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +20,21 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    ProjectMapper projectMapper;
+
 
     @PostMapping
-    public Project addProject(@RequestBody Project project) {
-        return projectService.addProject(project);
+    public ResponseEntity<ProjectResponseDto> addProject(@RequestBody @Valid CreateProjectRequestDto projectRequestDto) {
+
+        Project project=projectMapper.dtoToProjectModel(projectRequestDto);
+
+        Project savedProject=projectService.addProject(project);
+
+        ProjectResponseDto projectResponseDto=projectMapper.modelToProjectDto(savedProject);
+
+        return ResponseEntity.ok(projectResponseDto);
+
 
     }
 

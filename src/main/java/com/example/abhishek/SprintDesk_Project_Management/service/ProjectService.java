@@ -23,16 +23,6 @@ public class ProjectService {
         if(projectRepository.existsByKey(project.getKey())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project with key-"+project.getKey()+" already exists");
         }
-        if(project.getName()==null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project name is null");
-        }
-        if(project.getKey() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project key is null");
-        }
-        if(project.getKey()==null)
-        {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project key is required");
-        }
 
         project.setCreatedAt(Instant.now());
         project.setUpdatedAt(project.getCreatedAt());
