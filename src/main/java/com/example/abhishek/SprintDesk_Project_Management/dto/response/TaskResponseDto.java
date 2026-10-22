@@ -5,17 +5,16 @@ import com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class TaskResponseDto {
-    private long id;
+    private Long id;
     private long projectId;
     private String title;
     private String description;
     private TaskStatus  taskStatus;
     private TaskPriority taskPriority;
-    private long assigneeId;
-    private LocalDate localDate;
+    private Long assigneeId;
+    private LocalDate dueDate;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -67,20 +66,20 @@ public class TaskResponseDto {
         this.taskPriority = taskPriority;
     }
 
-    public long getAssigneeId() {
+    public Long getAssigneeId() {
         return assigneeId;
     }
 
-    public void setAssigneeId(long assigneeId) {
+    public void setAssigneeId(Long assigneeId) {
         this.assigneeId = assigneeId;
     }
 
-    public LocalDate getLocalDate() {
-        return localDate;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public Instant getCreatedAt() {

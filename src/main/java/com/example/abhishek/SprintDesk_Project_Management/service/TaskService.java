@@ -27,6 +27,8 @@ public class TaskService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
         task.setProject(project);
+        task.setCreatedAt(Instant.now());
+        task.setUpdatedAt(Instant.now());
         taskRepository.save(task);
         return task;
     }

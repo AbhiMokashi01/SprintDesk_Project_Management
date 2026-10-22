@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,9 @@ public class ProjectController {
 
         ProjectResponseDto projectResponseDto=projectMapper.modelToProjectDto(savedProject);
 
-        return ResponseEntity.ok(projectResponseDto);
+        URI location= URI.create("/api/projects/"+savedProject.getId());
+        return ResponseEntity.created(location)
+                .body(projectResponseDto);
 
 
     }

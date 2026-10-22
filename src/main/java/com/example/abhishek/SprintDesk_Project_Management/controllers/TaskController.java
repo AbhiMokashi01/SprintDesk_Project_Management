@@ -1,7 +1,11 @@
 package com.example.abhishek.SprintDesk_Project_Management.controllers;
 
+import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateTaskRequestDto;
+import com.example.abhishek.SprintDesk_Project_Management.dto.response.TaskResponseDto;
+import com.example.abhishek.SprintDesk_Project_Management.mapper.TaskMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
 import com.example.abhishek.SprintDesk_Project_Management.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +20,26 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private TaskMapper taskMapper;
+
     @PostMapping("/api/projects/{projectId}/tasks")
-    public ResponseEntity<Task> addTask(@RequestBody Task task, @PathVariable long projectId) {
-        URI location= URI.create("/api/projects/"+projectId+"/tasks");
+    public ResponseEntity<TaskResponseDto> addTask(@RequestBody @Valid CreateTaskRequestDto taskRequestDto, @PathVariable long projectId) {
+
+        Task task=taskMapper.dtoToModel(taskRequestDto);
+
+        Task savedTask=taskService.addTask(task,projectId);
+
+        TaskResponseDto taskResponseDto=taskMapper.modelToDto(savedTask);
+
+
+
+
+
+        URI location= URI.create("/api/projects/"+projectId+"/tasks"+savedTask.getId());
 
         return ResponseEntity.created(location)
-                .body(taskService.addTask(task,projectId));
+                .body(taskResponseDto);
 
     }
 
