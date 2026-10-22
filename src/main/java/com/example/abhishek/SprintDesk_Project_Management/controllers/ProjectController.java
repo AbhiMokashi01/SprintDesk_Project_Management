@@ -2,6 +2,7 @@ package com.example.abhishek.SprintDesk_Project_Management.controllers;
 
 
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateProjectRequestDto;
+import com.example.abhishek.SprintDesk_Project_Management.dto.request.UpdateProjectRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.response.ProjectResponseDto;
 import com.example.abhishek.SprintDesk_Project_Management.mapper.ProjectMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
@@ -67,8 +68,12 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-    public Project updateProject(@PathVariable Long id,@RequestBody Project project) {
-        return projectService.updateProject(id,project);
+    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable Long id, @RequestBody UpdateProjectRequestDto projectRequestDto) {
+
+        Project project=projectMapper.updateDtoToModel(projectRequestDto);
+        Project updatedProject=projectService.updateProject(id, project);
+        ProjectResponseDto projectResponseDto=projectMapper.modelToProjectDto(updatedProject);
+        return ResponseEntity.ok(projectResponseDto);
     }
 
     @DeleteMapping("/{id}")
