@@ -55,7 +55,7 @@ public class ProjectService {
             return projectRepository.save(project);
             }
         else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found");
+            throw new ResourceNotFoundException("Project with id-"+id+" not found");
     }
 
 
@@ -64,6 +64,6 @@ public class ProjectService {
             projectRepository.deleteById(id);
         }
         else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with id-"+id+" not found");
+            throw new ResourceNotFoundException("Project with id-"+id+" not found");
     }
 }
