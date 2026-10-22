@@ -51,13 +51,26 @@ public class ProjectService {
     }
 
 
-    public Project updateProject(Long id, Project project) {
-        if(projectRepository.existsById(id)) {
-            project.setUpdatedAt(Instant.now());
-            return projectRepository.save(project);
-            }
-        else
-            throw new ResourceNotFoundException("Project with id-"+id+" not found");
+    public Project updateProject(Long id, Project updated) {
+
+        Project existing = projectRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Project not found: " + id
+                        )
+                );
+
+        if (updated.getName() != null) {
+            existing.setName(updated.getName());
+        }
+
+        if (updated.getDescription() != null) {
+            existing.setDescription(updated.getDescription());
+        }
+
+        existing.setUpdatedAt(Instant.now());
+
+        return projectRepository.save(existing);
     }
 
 

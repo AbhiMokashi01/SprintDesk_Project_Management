@@ -59,6 +59,7 @@ public ResponseEntity<ValidationExceptionDto> validationExceptionHandler(MethodA
 }
 
 
+@ExceptionHandler(BusinessConflictException.class)
 public ResponseEntity<ExceptionResponseDto> businessConflictHandler(BusinessConflictException exception, HttpServletRequest request)
 {
     ExceptionResponseDto exceptionDto=new ExceptionResponseDto(
