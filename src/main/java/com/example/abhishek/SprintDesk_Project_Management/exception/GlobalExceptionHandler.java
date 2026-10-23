@@ -64,7 +64,7 @@ public ResponseEntity<ExceptionResponseDto> businessConflictHandler(BusinessConf
 {
     ExceptionResponseDto exceptionDto=new ExceptionResponseDto(
             LocalDateTime.now(),
-            exception.getMessage(),
+            exception.getLocalizedMessage(),
             HttpStatus.CONFLICT.value(),
             HttpStatus.CONFLICT.getReasonPhrase(),
             request.getRequestURI()
