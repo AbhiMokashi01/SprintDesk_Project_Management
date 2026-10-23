@@ -1,5 +1,6 @@
 package com.example.abhishek.SprintDesk_Project_Management.models;
 
+import com.example.abhishek.SprintDesk_Project_Management.dto.response.MemberResponseDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,5 +36,12 @@ public class Member {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public MemberResponseDto modelToDto(Member createdMember) {
+        MemberResponseDto memberResponseDto=new MemberResponseDto();
+        memberResponseDto.setId(createdMember.getId());
+        memberResponseDto.setEmail(createdMember.getEmail());
+        memberResponseDto.s
     }
 }
