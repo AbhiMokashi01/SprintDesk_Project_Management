@@ -9,7 +9,6 @@ import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepo
 import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 

@@ -5,7 +5,9 @@ import com.example.abhishek.SprintDesk_Project_Management.exception.BusinessConf
 import com.example.abhishek.SprintDesk_Project_Management.exception.DuplicateProjectKeyException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
+import com.example.abhishek.SprintDesk_Project_Management.models.Task;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
+import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class ProjectService {
 
     @Autowired
     ProjectRepository projectRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
 
     public Project addProject(Project project) {
@@ -76,7 +81,8 @@ public class ProjectService {
 
     public void deleteProjectById(Long id) {
         if(projectRepository.existsById(id)) {
-            if(!projectRepository.findAllTasksByProjectId(id).isEmpty()) {
+            List<Task> tasksOfProject=taskRepository.findAllByProject(projectRepository.findById(id).get());
+            if(!tasksOfProject.isEmpty()) {
                 throw new BusinessConflictException("Project with id- "+id+" cannot be deleted as it contains tasks");
             }
             else {

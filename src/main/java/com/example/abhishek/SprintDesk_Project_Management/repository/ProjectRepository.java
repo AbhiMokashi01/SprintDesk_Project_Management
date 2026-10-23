@@ -14,7 +14,7 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
 //    public String deleteProject(Long id);
 
     boolean existsByKey(String key);
-    List<Task> findAllTasksByProjectId(Long id);
+
 
 
 }
