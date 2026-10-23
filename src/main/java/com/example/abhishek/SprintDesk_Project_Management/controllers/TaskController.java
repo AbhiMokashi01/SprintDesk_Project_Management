@@ -2,6 +2,7 @@ package com.example.abhishek.SprintDesk_Project_Management.controllers;
 
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.CreateTaskRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.request.UpdateTaskRequestDto;
+import com.example.abhishek.SprintDesk_Project_Management.dto.request.UpdateTaskStatusRequestDto;
 import com.example.abhishek.SprintDesk_Project_Management.dto.response.TaskResponseDto;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.mapper.TaskMapper;
@@ -87,6 +88,23 @@ public class TaskController {
         taskService.deleteTaskById(taskId);
         return ResponseEntity.noContent().build();
 
+    }
+
+
+    @PatchMapping("/api/tasks/{taskId}/status")
+    public ResponseEntity<TaskResponseDto> updateTaskStatus(
+
+            @PathVariable Long taskId,
+
+            @Valid @RequestBody UpdateTaskStatusRequestDto request
+    ) {
+        System.out.println("Got in controler");
+
+        Task updatedTask = taskService.updateTaskStatus(taskId, request.getTaskStatus());
+
+        return ResponseEntity.ok(
+                taskMapper.modelToDto(updatedTask)
+        );
     }
 
 }

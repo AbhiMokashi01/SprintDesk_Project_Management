@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.List;
 
+import static com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus.*;
+
 @Service
 public class TaskService {
 
@@ -102,7 +104,7 @@ public class TaskService {
     public void deleteTaskById(long taskId) {
         Task task = taskRepository.findById(taskId).orElse(null);
         if(taskRepository.findById(taskId).isPresent()) {
-            if(task.getStatus()== TaskStatus.DONE)
+            if(task.getStatus()== DONE)
                 taskRepository.delete(task);
             else
                 throw new BusinessConflictException("Task with TaskId- "+taskId+" cant be deleted as the status is still in progress");
@@ -112,4 +114,67 @@ public class TaskService {
             throw new ResourceNotFoundException("Task not found with id -"+taskId);
         }
     }
-}
+
+
+    public Task updateTaskStatus(long taskId, TaskStatus updatedTaskStatus) {
+        System.out.println("Inside UpdateTaskStatus Service");
+        Task existingTask = taskRepository.findById(taskId).orElse(null);
+        if (existingTask == null) {
+            throw new ResourceNotFoundException("Task not found with id -" + taskId);
+        }
+
+        TaskStatus currentStatus = existingTask.getStatus();
+
+        if (currentStatus == updatedTaskStatus)
+            return existingTask;
+
+        if (!isValidTransition(currentStatus, updatedTaskStatus)) {
+            throw new BusinessConflictException("Cannot change taskStatus from " + currentStatus + " to " + updatedTaskStatus);
+        }
+        if (updatedTaskStatus == IN_PROGRESS) {
+
+            Long assigneeId = existingTask.getAssigneeId();
+
+            if (assigneeId == null) {
+
+                throw new BusinessConflictException(
+                        "Cannot move Task to IN_PROGRESS "
+                                + "because no Member is assigned"
+                );
+            }
+
+
+        }
+
+        // Member must actually exist
+        if (memberRepository.findById(existingTask.getAssigneeId()).isEmpty()) {
+
+            throw new BusinessConflictException(
+                    "Cannot move Task to IN_PROGRESS "
+                            + "because the assigned Member does not exist"
+            );
+        }
+
+        existingTask.setStatus(updatedTaskStatus);
+        existingTask.setUpdatedAt(Instant.now());
+        return taskRepository.save(existingTask);
+    }
+
+
+
+    private boolean isValidTransition(TaskStatus current, TaskStatus next) {
+
+        if (current == null || next == null) {
+            return false;
+        }
+
+        return switch (current) {
+            case TODO ->  next == IN_PROGRESS || next == BLOCKED;
+
+            case IN_PROGRESS -> next == BLOCKED || next == DONE;
+
+            case BLOCKED , DONE -> next == IN_PROGRESS;
+        };
+    }
+
+    }
