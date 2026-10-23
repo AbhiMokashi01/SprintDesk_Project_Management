@@ -30,6 +30,19 @@ public class Task {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
     public Long getId() {
         return id;
     }

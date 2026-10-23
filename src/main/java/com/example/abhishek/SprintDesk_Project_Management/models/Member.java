@@ -1,10 +1,10 @@
 package com.example.abhishek.SprintDesk_Project_Management.models;
 
 import com.example.abhishek.SprintDesk_Project_Management.dto.response.MemberResponseDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member {
@@ -13,6 +13,10 @@ public class Member {
     Long id;
     String name;
     String email;
+
+
+    @OneToMany(mappedBy="member",cascade = CascadeType.ALL)
+    List<Task> taskList=new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -42,6 +46,7 @@ public class Member {
         MemberResponseDto memberResponseDto=new MemberResponseDto();
         memberResponseDto.setId(createdMember.getId());
         memberResponseDto.setEmail(createdMember.getEmail());
-        memberResponseDto.s
+        memberResponseDto.setName(createdMember.getName());
+        return memberResponseDto;
     }
 }

@@ -35,10 +35,18 @@ public class TaskMapper {
 
     public Task UpdateDtoToModel(@Valid UpdateTaskRequestDto taskRequestDto) {
         Task task=new Task();
-        task.setTitle(taskRequestDto.getTitle());
-        task.setDescription(taskRequestDto.getDescription());
-        task.setPriority(taskRequestDto.getPriority());
-        task.setDueDate(taskRequestDto.getDueDate());
+        if(taskRequestDto.getTitle()!=null)
+            task.setTitle(taskRequestDto.getTitle());
+        if (taskRequestDto.getDescription()!=null)
+            task.setDescription(taskRequestDto.getDescription());
+        if (taskRequestDto.getAssigneeId()!=null)
+            task.setAssigneeId(taskRequestDto.getAssigneeId());
+        if (taskRequestDto.getDueDate()!=null)
+            task.setDueDate(taskRequestDto.getDueDate());
+        if (taskRequestDto.getPriority()!=null)
+            task.setPriority(taskRequestDto.getPriority());
+
+
         return task;
     }
 }

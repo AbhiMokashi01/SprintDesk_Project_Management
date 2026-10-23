@@ -2,9 +2,11 @@ package com.example.abhishek.SprintDesk_Project_Management.service;
 
 import com.example.abhishek.SprintDesk_Project_Management.exception.BusinessConflictException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
+import com.example.abhishek.SprintDesk_Project_Management.models.Member;
 import com.example.abhishek.SprintDesk_Project_Management.models.Project;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
 import com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus;
+import com.example.abhishek.SprintDesk_Project_Management.repository.MemberRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class TaskService {
     TaskRepository taskRepository;
     @Autowired
     ProjectRepository projectRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
 
     public Task addTask(Task task, long projectId) {
         Project project = projectRepository.findById(projectId).orElse(null);
@@ -57,6 +62,18 @@ public class TaskService {
                                 "Task not found with ID: " + taskId
                         )
                 );
+
+        if(updatedTask.getAssigneeId()!=null)
+        {
+            Member member = memberRepository.findById(updatedTask.getAssigneeId()).orElse(null);
+            if(member != null) {
+                existingTask.setAssigneeId(updatedTask.getAssigneeId());
+                existingTask.setMember(member);
+            }
+            else
+                throw new ResourceNotFoundException("Assignee with id- "+updatedTask.getAssigneeId()+ "not found");
+
+        }
 
         // 2. Update only allowed fields
         if (updatedTask.getTitle() != null) {
