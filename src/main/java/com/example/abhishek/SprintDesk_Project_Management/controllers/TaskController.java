@@ -7,6 +7,8 @@ import com.example.abhishek.SprintDesk_Project_Management.dto.response.TaskRespo
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
 import com.example.abhishek.SprintDesk_Project_Management.mapper.TaskMapper;
 import com.example.abhishek.SprintDesk_Project_Management.models.Task;
+import com.example.abhishek.SprintDesk_Project_Management.models.TaskPriority;
+import com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus;
 import com.example.abhishek.SprintDesk_Project_Management.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +48,8 @@ public class TaskController {
 
 
     @GetMapping("/api/projects/{projectId}/tasks")
-    public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId) {
-        List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId);
+    public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId, @RequestParam(required = false) TaskPriority taskPriority ,@RequestParam(required = false) TaskStatus taskStatus) {
+        List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId,taskPriority,taskStatus);
 
         if(tasksOfProject.isEmpty())
             throw new ResourceNotFoundException("Tasks not found for project -"+projectId);
@@ -98,7 +100,7 @@ public class TaskController {
 
             @Valid @RequestBody UpdateTaskStatusRequestDto request
     ) {
-        System.out.println("Got in controler");
+
 
         Task updatedTask = taskService.updateTaskStatus(taskId, request.getTaskStatus());
 

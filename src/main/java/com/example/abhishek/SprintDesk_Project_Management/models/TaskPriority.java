@@ -4,5 +4,7 @@ public enum TaskPriority {
     LOW,
     MEDIUM,
     HIGH,
-    CRITICAL
+    CRITICAL,
+    NONE
+
 }

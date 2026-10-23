@@ -2,10 +2,7 @@ package com.example.abhishek.SprintDesk_Project_Management.service;
 
 import com.example.abhishek.SprintDesk_Project_Management.exception.BusinessConflictException;
 import com.example.abhishek.SprintDesk_Project_Management.exception.ResourceNotFoundException;
-import com.example.abhishek.SprintDesk_Project_Management.models.Member;
-import com.example.abhishek.SprintDesk_Project_Management.models.Project;
-import com.example.abhishek.SprintDesk_Project_Management.models.Task;
-import com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus;
+import com.example.abhishek.SprintDesk_Project_Management.models.*;
 import com.example.abhishek.SprintDesk_Project_Management.repository.MemberRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
@@ -43,8 +40,17 @@ public class TaskService {
         return task;
     }
 
-    public List<Task> getTasksByProjectId(long projectId) {
+    public List<Task> getTasksByProjectId(long projectId, TaskPriority taskPriority,TaskStatus taskStatus) {
         if(projectRepository.findById(projectId).isPresent()) {
+            if(taskStatus!=null && taskPriority!=null) {
+               return taskRepository.findFilteredTasks(projectId,taskStatus,taskPriority);
+            }
+            if(taskStatus!=null && taskPriority==null) {
+                return taskRepository.findByProjectIdAndStatus(projectId,taskStatus);
+            }
+            if(taskStatus==null &&  taskPriority!=null) {
+                return taskRepository.findByProjectIdAndPriority(projectId,taskPriority);
+            }
             return taskRepository.findAllByProjectId(projectId);
         }
         else
@@ -117,46 +123,49 @@ public class TaskService {
 
 
     public Task updateTaskStatus(long taskId, TaskStatus updatedTaskStatus) {
-        System.out.println("Inside UpdateTaskStatus Service");
-        Task existingTask = taskRepository.findById(taskId).orElse(null);
-        if (existingTask == null) {
-            throw new ResourceNotFoundException("Task not found with id -" + taskId);
-        }
+
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task not found with id - " + taskId
+                ));
 
         TaskStatus currentStatus = existingTask.getStatus();
 
-        if (currentStatus == updatedTaskStatus)
+        if (currentStatus == updatedTaskStatus) {
             return existingTask;
+        }
 
         if (!isValidTransition(currentStatus, updatedTaskStatus)) {
-            throw new BusinessConflictException("Cannot change taskStatus from " + currentStatus + " to " + updatedTaskStatus);
+            throw new BusinessConflictException(
+                    "Cannot change taskStatus from " +
+                            currentStatus + " to " + updatedTaskStatus
+            );
         }
+
         if (updatedTaskStatus == IN_PROGRESS) {
 
             Long assigneeId = existingTask.getAssigneeId();
 
+            // Validation 1: Assignee must be assigned
             if (assigneeId == null) {
-
                 throw new BusinessConflictException(
-                        "Cannot move Task to IN_PROGRESS "
-                                + "because no Member is assigned"
+                        "Cannot move Task to IN_PROGRESS " +
+                                "because no Member is assigned"
                 );
             }
 
-
-        }
-
-        // Member must actually exist
-        if (memberRepository.findById(existingTask.getAssigneeId()).isEmpty()) {
-
-            throw new BusinessConflictException(
-                    "Cannot move Task to IN_PROGRESS "
-                            + "because the assigned Member does not exist"
-            );
+            // Validation 2: Assigned member must exist
+            if (!memberRepository.existsById(assigneeId)) {
+                throw new BusinessConflictException(
+                        "Cannot move Task to IN_PROGRESS " +
+                                "because the assigned Member does not exist"
+                );
+            }
         }
 
         existingTask.setStatus(updatedTaskStatus);
         existingTask.setUpdatedAt(Instant.now());
+
         return taskRepository.save(existingTask);
     }
 
