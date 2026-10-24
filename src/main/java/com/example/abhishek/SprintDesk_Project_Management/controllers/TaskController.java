@@ -48,13 +48,14 @@ public class TaskController {
 
 
     @GetMapping("/api/projects/{projectId}/tasks")
-    public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId, @RequestParam(required = false) TaskPriority taskPriority ,@RequestParam(required = false) TaskStatus taskStatus) {
-        List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId,taskPriority,taskStatus);
+    public ResponseEntity<List<TaskResponseDto>>  getTasksByProjectId(@PathVariable long projectId, @RequestParam(required = false) TaskPriority taskPriority ,@RequestParam(required = false) TaskStatus taskStatus,@RequestParam(required = false) String sortBy, @RequestParam(required = false) String sortDirection) {
+        List<Task> tasksOfProject=taskService.getTasksByProjectId(projectId,taskPriority,taskStatus,sortBy,sortDirection);
 
         if(tasksOfProject.isEmpty())
             throw new ResourceNotFoundException("Tasks not found for project -"+projectId);
 
         List<TaskResponseDto> taskResponseDtoList=new ArrayList<>();
+
 
 
         for(Task task:tasksOfProject){

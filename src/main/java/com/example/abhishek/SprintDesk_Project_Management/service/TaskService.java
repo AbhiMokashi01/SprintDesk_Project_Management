@@ -7,12 +7,16 @@ import com.example.abhishek.SprintDesk_Project_Management.repository.MemberRepos
 import com.example.abhishek.SprintDesk_Project_Management.repository.ProjectRepository;
 import com.example.abhishek.SprintDesk_Project_Management.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.InvalidParameterException;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.abhishek.SprintDesk_Project_Management.models.TaskStatus.*;
 
@@ -40,21 +44,41 @@ public class TaskService {
         return task;
     }
 
-    public List<Task> getTasksByProjectId(long projectId, TaskPriority taskPriority,TaskStatus taskStatus) {
-        if(projectRepository.findById(projectId).isPresent()) {
-            if(taskStatus!=null && taskPriority!=null) {
-               return taskRepository.findFilteredTasks(projectId,taskStatus,taskPriority);
-            }
-            if(taskStatus!=null && taskPriority==null) {
-                return taskRepository.findByProjectIdAndStatus(projectId,taskStatus);
-            }
-            if(taskStatus==null &&  taskPriority!=null) {
-                return taskRepository.findByProjectIdAndPriority(projectId,taskPriority);
-            }
-            return taskRepository.findAllByProjectId(projectId);
+    public List<Task> getTasksByProjectId(long projectId, TaskPriority taskPriority,TaskStatus taskStatus,String sortBy,String sortDirection) {
+
+        Set<String> validSortParameters= Set.of("createdAt","updatedAt","title","dueDate");
+        Set<String> validSortDirection= Set.of("ASC","DESC");
+        Sort sort=Sort.by(Sort.Direction.ASC,"title");
+
+        if(!projectRepository.findById(projectId).isPresent()) {
+            throw new ResourceNotFoundException("Projects not found with project id"+projectId);
         }
         else
-            throw new ResourceNotFoundException("Projects not found with project id"+projectId);
+        {
+            if(sortBy!=null && sortDirection!=null) {
+                if (!validSortParameters.contains(sortBy) || !validSortDirection.contains(sortDirection)) {
+                    throw new InvalidParameterException("sortBy or sortDirection are invalid");
+                } else {
+                    if (sortDirection.equals("ASC"))
+                        sort = Sort.by(Sort.Direction.ASC, sortBy);
+                    else {
+                        sort = Sort.by(Sort.Direction.DESC, sortBy);
+                    }
+                }
+            }
+
+            if(taskStatus!=null && taskPriority!=null) {
+                return taskRepository.findFilteredTasks(projectId,taskStatus,taskPriority,sort);
+            }
+            if(taskStatus!=null && taskPriority==null) {
+                return taskRepository.findByProjectIdAndStatus(projectId,taskStatus,sort);
+            }
+            if(taskStatus==null &&  taskPriority!=null) {
+                return taskRepository.findByProjectIdAndPriority(projectId,taskPriority,sort);
+            }
+            return taskRepository.findAllByProjectId(projectId,sort);
+        }
+
     }
 
     public Task getTaskById(long taskId) {

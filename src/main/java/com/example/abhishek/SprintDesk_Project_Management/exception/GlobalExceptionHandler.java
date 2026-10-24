@@ -11,6 +11,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.swing.text.html.parser.Entity;
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +72,20 @@ public ResponseEntity<ExceptionResponseDto> businessConflictHandler(BusinessConf
             request.getRequestURI()
     );
     return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(exceptionDto);
+}
+
+@ExceptionHandler(InvalidParameterException.class)
+public ResponseEntity<ExceptionResponseDto> invalidParamHandler(InvalidParameterException exception, HttpServletRequest request)
+{
+    ExceptionResponseDto exceptionDto=new ExceptionResponseDto(
+            LocalDateTime.now(),
+            exception.getLocalizedMessage(),
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            request.getRequestURI()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(exceptionDto);
 }
 
